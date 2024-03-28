@@ -147,13 +147,15 @@ def update_machine_type_view(request: HttpRequest) -> JsonResponse:
         trained_employees_to_add = form.cleaned_data.get("trained_employees_to_add")
 
         if trained_employees_to_add:
-            machine_type.trained_employees.add(*trained_employees_to_add)
+            for employee in trained_employees_to_add:
+                machine_type.trained_employees.add(employee)
             changed = True
 
         trained_employees_to_delete = form.cleaned_data.get("trained_employees_to_delete")
 
         if trained_employees_to_delete:
-            machine_type.trained_employees.remove(*trained_employees_to_delete)
+            for employee in trained_employees_to_delete:
+                machine_type.trained_employees.remove(employee)
             changed = True
 
         if changed:
