@@ -34,12 +34,17 @@ ExistingMachineTypes_dict = {value: label for value, label in ExistingMachineTyp
 class MachineType(BaseModel):
     """The idea of this model is that there is only one type of machine and a
     lot of users can be trained to use them.
+
+    Parameters
+    ----------
+    machine_type: str
+        Type of Machine on which the employess are trained.
+    trained_employees: Iterable[Employee]
+        List of employees that are trained to use this machinery type.
     """
     machine_type = models.CharField(
         max_length=100,
         choices=ExistingMachineTypes.choices,
-        blank=False,
-        null=False,
         unique=True,
         verbose_name=_("Type of machine."),
         help_text=_("Type of machine."),
@@ -61,18 +66,23 @@ class MachineType(BaseModel):
 
 class Machine(BaseModel):
     """These are the machines that physically are in the facility.
+
+    Parameters
+    ----------
+    machine_numer: str
+        Number like identifier of the machine.
+    machine_title: str
+        Name of the machine.
+    machine_type: MachineType
+        Machine type of this machine.
     """
     machine_number = models.CharField(
         max_length=100,
-        blank=False,
-        null=False,
         verbose_name=_("Number of the machine"),
         help_text=_("Number of the machine."),
     )
     machine_title = models.CharField(
         max_length=100,
-        blank=False,
-        null=False,
         verbose_name=_("Machine title."),
         help_text=_("Machine title."),
     )
