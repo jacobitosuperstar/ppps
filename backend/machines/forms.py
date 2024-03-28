@@ -70,13 +70,7 @@ class MachineTypeForm(forms.Form):
         raw_employees_ids_list = self.cleaned_data.get("trained_employees_to_add")
 
         if raw_employees_ids_list:
-
             employees_ids_list = raw_employees_ids_list.split(",")
-            employees_ids_list = [
-                int(employee_id) for employee_id in employees_ids_list
-                if employee_id.isdigit()
-            ]
-
             employees_list = Employee.objects.filter(id__in=employees_ids_list)
             return employees_list
 
@@ -86,13 +80,7 @@ class MachineTypeForm(forms.Form):
         raw_employees_ids_list = self.cleaned_data.get("trained_employees_to_delete")
 
         if raw_employees_ids_list:
-
             employees_ids_list = raw_employees_ids_list.split(",")
-            employees_ids_list = [
-                int(employee_id) for employee_id in employees_ids_list
-                if employee_id.isdigit()
-            ]
-
             employees_list = Employee.objects.filter(id__in=employees_ids_list)
             return employees_list
 

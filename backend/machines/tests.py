@@ -47,6 +47,8 @@ class AuthTokenWorkflowTest(TestCase):
         created.
         """
         # CREATE MACHINE TYPE
+        # machine_type: plastic_inyector
+        # trained_employees: 9999999999,8888888888,7777777777
         msg = {
             "machine_type": ExistingMachineTypes.PI,
             "trained_employees": [self.admin_user.id],
