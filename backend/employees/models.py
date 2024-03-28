@@ -6,7 +6,6 @@ from typing import (
     Dict,
 )
 from django.utils.translation import gettext as _
-from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -106,6 +105,19 @@ class EmployessManager(BaseUserManager):
 
 class Employee(AbstractBaseUser, BaseModel):
     """Custom user model for the application.
+
+    Parameters
+    ----------
+    identification: str
+        Identification number of the Employee.
+    names: str
+        Names of the employee.
+    last_names: str
+        Last names of the employee.
+    role: str
+        Role of the employee.
+    birthday: DateTime
+        Date (DD/MM/YYYY) of the employee's birthday.
     """
     PRIVATE_FIELDS = [
         # "id",
@@ -118,38 +130,22 @@ class Employee(AbstractBaseUser, BaseModel):
 
     identification = models.CharField(
         max_length=50,
-        blank=False,
-        null=False,
         unique=True,
-        verbose_name=_("identification"),
-        help_text=_("identification number")
     )
     names = models.CharField(
         max_length=100,
-        blank=False,
-        null=False,
-        verbose_name=_("employee names"),
-        help_text=_("employee's names")
     )
     last_names = models.CharField(
         max_length=100,
-        blank=False,
-        null=False,
-        verbose_name=_("employee last names"),
-        help_text=_("employee's lastnames")
     )
     role = models.CharField(
         max_length=20,
         choices=RoleChoices.choices,
         default=RoleChoices.PRODUCTION,
-        verbose_name=_("role"),
-        help_text=_("employee role"),
     )
     birthday = models.DateField(
         blank=False,
         null=True,
-        verbose_name=_("birthday"),
-        help_text=_("birthday of the employee")
     )
     date_joined = models.DateField(
         auto_now_add=True,
@@ -199,7 +195,20 @@ OOOTypes_dict = {value: label for value, label in OOOTypes.choices}
 
 
 class OOO(BaseModel):
-    """Employee type of OOO.
+    """Out Of Office.
+
+    Parameters
+    ----------
+    employee: Employee
+        Employee that is OOO.
+    ooo_type: str
+        Type of OOO that the employee has.
+    start_date: DateTime
+        Date (HH:MM:SS DD/MM/YYYY) on which the OOO time starts.
+    end_date: DateTime
+        Date (HH:MM:SS DD/MM/YYYY) on which the OOO time ends.
+    description: str
+        Description of the OOO.
     """
     PRIVATE_FIELDS = [
         # "id",
@@ -213,23 +222,12 @@ class OOO(BaseModel):
     ooo_type = models.CharField(
         max_length=20,
         choices=OOOTypes.choices,
-        blank=False,
-        null=False,
         verbose_name=_("out of office"),
         help_text=_("out of office time"),
     )
-    start_date = models.DateTimeField(
-        blank=False,
-        null=False,
-    )
-    end_date = models.DateTimeField(
-        blank=False,
-        null=False,
-    )
-    description = models.TextField(
-        blank=False,
-        null=False,
-    )
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    description = models.TextField()
 
     class Meta:
         db_table = "ooo"
