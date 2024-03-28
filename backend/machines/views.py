@@ -100,7 +100,8 @@ def create_machine_type_view(request: HttpRequest) -> JsonResponse:
 
         trained_employees = form.cleaned_data.get("trained_employees")
         if trained_employees:
-            machine_type.trained_employees.add(*trained_employees)
+            for employee in trained_employees:
+                machine_type.trained_employees.add(employee)
 
         msg = {"machine_type": machine_type.serializer(depth=1)}
         return JsonResponse(msg, status=status.created)
