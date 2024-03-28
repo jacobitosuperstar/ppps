@@ -22,6 +22,14 @@ class AuthTokenWorkflowTest(TestCase):
         self.admin_user.role = RoleChoices.PRODUCTION_MANAGER
         self.admin_user.save()
 
+        self.production_employee: Employee = Employee.objects.create_user(
+            identification="2222222222",
+            names="test_production_employee",
+            last_names="test_production_employee",
+            role=RoleChoices.PRODUCTION,
+        )
+        self.production_employee.save()
+
         msg = {
             "identification": "1111111111",
             "password": "AzQWsX09",
@@ -47,11 +55,9 @@ class AuthTokenWorkflowTest(TestCase):
         created.
         """
         # CREATE MACHINE TYPE
-        # machine_type: plastic_inyector
-        # trained_employees: 9999999999,8888888888,7777777777
         msg = {
             "machine_type": ExistingMachineTypes.PI,
-            "trained_employees": [self.admin_user.id],
+            "trained_employees": [self.production_employee.identification],
         }
         response = self.client.post(
             reverse(viewname="create_machine_type"),
@@ -96,7 +102,7 @@ class AuthTokenWorkflowTest(TestCase):
         # CREATE MACHINE TYPE
         msg = {
             "machine_type": ExistingMachineTypes.PI,
-            "trained_employees": [self.admin_user.id],
+            "trained_employees": [self.production_employee.identification],
         }
         response = self.client.post(
             reverse(viewname="create_machine_type"),

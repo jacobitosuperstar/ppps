@@ -100,8 +100,7 @@ def create_machine_type_view(request: HttpRequest) -> JsonResponse:
 
         trained_employees = form.cleaned_data.get("trained_employees")
         if trained_employees:
-            for employee in trained_employees:
-                machine_type.trained_employees.add(employee)
+            machine_type.trained_employees.add(*trained_employees)
 
         msg = {"machine_type": machine_type.serializer(depth=1)}
         return JsonResponse(msg, status=status.created)
@@ -148,15 +147,13 @@ def update_machine_type_view(request: HttpRequest) -> JsonResponse:
         trained_employees_to_add = form.cleaned_data.get("trained_employees_to_add")
 
         if trained_employees_to_add:
-            for employee in trained_employees_to_add:
-                machine_type.trained_employees.add(employee)
+            machine_type.trained_employees.add(*trained_employees_to_add)
             changed = True
 
         trained_employees_to_delete = form.cleaned_data.get("trained_employees_to_delete")
 
         if trained_employees_to_delete:
-            for employee in trained_employees_to_delete:
-                machine_type.trained_employees.remove(employee)
+            machine_type.trained_employees.remove(*trained_employees_to_delete)
             changed = True
 
         if changed:
