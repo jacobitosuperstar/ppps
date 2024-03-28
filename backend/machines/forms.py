@@ -29,6 +29,14 @@ class MachineTypeCreationForm(forms.Form):
             "trained_employees",
         ]
 
+    def clean_machine_type(self) -> str:
+        """Checks for the uniqueness of the machine type.
+        """
+        machine_type = self.cleaned_data["machine_type"]
+        if MachineType.objects.filter(machine_type=machine_type).exists():
+            raise forms.ValidationError(_("There can only be one machine type."))
+        return machine_type
+
     def clean_trained_employees(self) -> Optional[Iterable[Employee]]:
         """Returns the list of user ids
         """

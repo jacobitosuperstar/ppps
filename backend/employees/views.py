@@ -1,4 +1,4 @@
-from typing import Union, Iterable
+from typing import Union, Iterable, Optional
 import secrets
 import json
 from django.http import (
@@ -72,7 +72,7 @@ def employee_login_view(request: HttpRequest) -> JsonResponse:
 
     identification = form.cleaned_data.get("identification")
     password = form.cleaned_data.get("password")
-    employee = authenticate(
+    employee: Optional[Employee] = authenticate(
         request,
         identification=identification,
         password=password
@@ -90,6 +90,7 @@ def employee_login_view(request: HttpRequest) -> JsonResponse:
 
     msg = {
         "response": _("Logged in successfully"),
+        "employee": employee.serializer(depth=0),
         "token": token,
     }
     return JsonResponse(msg)
