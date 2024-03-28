@@ -51,7 +51,7 @@ services:
     networks:
       - server_network
   # Frontend App
-  app:
+  frontend:
     build:
       context: .
       dockerfile: ./frontend/Dockerfile
@@ -63,10 +63,6 @@ services:
       - server_network
     volumes:
       - ./frontend/:/app/
-    command: >
-      sh -c "
-      npm run dev
-      "
     depends_on:
       - database
       - backend
