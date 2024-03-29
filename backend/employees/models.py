@@ -166,6 +166,9 @@ class Employee(AbstractBaseUser, BaseModel):
 
     class Meta:
         db_table = "employees"
+        indexes = [
+            models.Index(fields=["identification"]),
+        ]
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
 
