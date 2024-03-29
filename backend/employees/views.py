@@ -25,7 +25,6 @@ from .models import (
     Employee,
     RoleChoices,
     OOO,
-    OOOTypes,
     RoleChoices_dict,
     OOOTypes_dict,
 )
