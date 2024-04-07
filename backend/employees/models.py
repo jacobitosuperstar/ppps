@@ -131,6 +131,8 @@ class Employee(AbstractBaseUser, BaseModel):
     identification = models.CharField(
         max_length=50,
         unique=True,
+        blank=False,
+        null=False,
     )
     names = models.CharField(
         max_length=100,
@@ -149,11 +151,9 @@ class Employee(AbstractBaseUser, BaseModel):
     )
     date_joined = models.DateField(
         auto_now_add=True,
-        verbose_name=_("Joining date"),
     )
     last_login = models.DateTimeField(
         auto_now=True,
-        verbose_name=_("Last Login"),
     )
     is_active = models.BooleanField(default=True,)
     is_staff = models.BooleanField(default=False,)
@@ -169,8 +169,8 @@ class Employee(AbstractBaseUser, BaseModel):
         indexes = [
             models.Index(fields=["identification"]),
         ]
-        verbose_name = _('employee')
-        verbose_name_plural = _('employees')
+        verbose_name = "employee"
+        verbose_name_plural = "employees"
 
     def __str__(self):
         return f"{self.identification}, {self.role}"
@@ -220,12 +220,10 @@ class OOO(BaseModel):
     employee = models.ForeignKey(
         Employee,
         on_delete=models.CASCADE,
-        verbose_name=_("employee"),
     )
     ooo_type = models.CharField(
         max_length=20,
         choices=OOOTypes.choices,
-        verbose_name=_("out of office"),
         help_text=_("out of office time"),
     )
     start_date = models.DateTimeField()
@@ -234,8 +232,8 @@ class OOO(BaseModel):
 
     class Meta:
         db_table = "ooo"
-        verbose_name = _("out of office")
-        verbose_name_plural = _("out of office")
+        verbose_name = "ooo"
+        verbose_name_plural = "ooos"
 
     def __str__(self: "OOO") -> str:
         msg = (

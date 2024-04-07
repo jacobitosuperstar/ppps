@@ -6,7 +6,7 @@ from employees.models import RoleChoices, Employee, OOOTypes
 from machines.models import ExistingMachineTypes
 
 
-class AuthTokenWorkflowTest(TestCase):
+class MachineryWorkflowTest(TestCase):
     """
     """
     def setUp(self) -> None:

@@ -4,7 +4,6 @@ from django.http import (
     JsonResponse,
 )
 from django.views.decorators.http import require_GET
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.timezone import now
 
 from jwt_authentication.decorators import authenticated_user
