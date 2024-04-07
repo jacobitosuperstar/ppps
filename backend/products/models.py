@@ -29,6 +29,7 @@ class Product(BaseModel):
         blank=False,
         null=False,
         max_length=255,
+        unique=True,
     )
     materials = models.JSONField(
         blank=False,
@@ -42,3 +43,8 @@ class Product(BaseModel):
         blank=False,
         null=True,
     )
+
+    class Meta:
+        db_table = "product"
+        verbose_name = "product"
+        verbose_name_plural = "products"
