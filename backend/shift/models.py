@@ -89,3 +89,8 @@ class Shift(BaseModel):
         blank=False,
         null=True,
     )
+
+    class Meta:
+        db_table = "shift"
+        verbose_name = "shift"
+        verbose_name_plural = "shifts"

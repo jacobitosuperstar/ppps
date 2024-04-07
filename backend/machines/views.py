@@ -105,7 +105,6 @@ def create_machine_type_view(request: HttpRequest) -> JsonResponse:
         msg = {"machine_type": machine_type.serializer(depth=1)}
         return JsonResponse(msg, status=status.created)
     except Exception as e:
-        raise e
         msg = {
             "response": _("Internal server error.")
         }

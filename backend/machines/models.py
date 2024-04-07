@@ -46,8 +46,6 @@ class MachineType(BaseModel):
         max_length=100,
         choices=ExistingMachineTypes.choices,
         unique=True,
-        verbose_name=_("Type of machine."),
-        help_text=_("Type of machine."),
     )
     trained_employees = models.ManyToManyField(
         to=Employee,
@@ -56,8 +54,8 @@ class MachineType(BaseModel):
 
     class Meta:
         db_table = "machine_type"
-        verbose_name = _("machine type")
-        verbose_name_plural = _("machine types")
+        verbose_name = "machine_type"
+        verbose_name_plural = "machine_types"
 
     def __str__(self) -> str:
         msg = f"Machine Type: {self.machine_type}"
@@ -78,25 +76,20 @@ class Machine(BaseModel):
     """
     machine_number = models.CharField(
         max_length=100,
-        verbose_name=_("Number of the machine"),
-        help_text=_("Number of the machine."),
     )
     machine_title = models.CharField(
         max_length=100,
-        verbose_name=_("Machine title."),
-        help_text=_("Machine title."),
     )
     machine_type = models.ForeignKey(
         to=MachineType,
         on_delete=models.CASCADE,
-        verbose_name=_("machine"),
     )
 
     class Meta:
         db_table = "machine"
         unique_together = ("machine_number", "machine_title")
-        verbose_name = _("Machine")
-        verbose_name_plural = _("Machine")
+        verbose_name = "machine"
+        verbose_name_plural = "machines"
 
     def __str__(self) -> str:
         msg = f"Machine {self.machine_number}: {self.machine_title}"
