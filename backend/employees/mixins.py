@@ -6,9 +6,10 @@ from django.views import View
 from jwt_authentication.decorators import authenticated_user
 from .decorators import role_validation
 
-class RoleValidatorMixin(View):
+
+class AuthenticatedUserMixin(View):
     @classmethod
-    def as_view(cls, allowed_roles, **initkwargs):
+    def as_view(cls, **initkwargs):
         """We modify the creation of the view function from the View class and
         apply our function decorator to a method decorator with the
         `method_decorator` function. Then we apply it to the dispatch function
@@ -16,7 +17,23 @@ class RoleValidatorMixin(View):
         """
         view = super().as_view(**initkwargs)
         # Apply authentication first
-        view = method_decorator(authenticated_user, name='dispatch')(view)
+        view = authenticated_user(view=view)
+        return view
+
+
+class RoleValidatorMixin(AuthenticatedUserMixin):
+    allowed_roles = []
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        """We modify the creation of the view function from the View class and
+        apply our function decorator to a method decorator with the
+        `method_decorator` function. Then we apply it to the dispatch function
+        so the decorator is executed before any request handling.
+        """
+        # calling the `as_view` function from the AuthenticatedUserMixin so
+        # we don't have to validate authentication twice.
+        view = super().as_view(**initkwargs)
         # Apply role validation after
-        view = method_decorator(role_validation(allowed_roles), name='dispatch')(view)
+        view = role_validation(allowed_roles=cls.allowed_roles,view=view)
         return view

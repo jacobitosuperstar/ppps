@@ -20,6 +20,7 @@ class ProductsWorkflowTest(TestCase):
             password="AzQWsX09",
         )
         self.admin_user.role = RoleChoices.PRODUCTION_MANAGER
+        # self.admin_user.role = RoleChoices.HR
         self.admin_user.save()
 
         msg = {
@@ -52,41 +53,52 @@ class ProductsWorkflowTest(TestCase):
             reverse(viewname="create_product"),
             data=msg,
         )
-        print(json.loads(response.content))
         self.assertEqual(response.status_code, status.created)
 
         # taking the information from the created machine
         response_info = json.loads(response.content)
-        print(response_info)
-        # created_machine_type_info = response_info["machine_type"]
+        created_product_info = response_info["product"]
 
         # LIST PRODUCTS
         response = self.client.get(reverse(viewname="list_products"))
         self.assertEqual(response.status_code, status.ok)
         response_info = json.loads(response.content)
-        print(response_info)
 
-        # # UPDATE PRODUCT
-        # msg = {
-        #     "name": "Testing product 2",
-        #     "materials": {"testing_material_3": 3, "testing_material_4": 4},
-        #     "production_time": 1200,
-        #     "setup_time": 1200,
-        # }
+        # DETAILED PRODUCT
+        response = self.client.get(
+            reverse(
+                viewname="detailed_product",
+                args=[created_product_info["id"]],
+            )
+        )
+        self.assertEqual(response.status_code, status.accepted)
 
-        # response = self.client.post(
-        #     reverse(viewname="update_product"),
-        #     args=[created_machine_info["id"]]
-        #     data=msg,
-        # )
-        # self.assertEqual(response.status_code, status.accepted)
+        # UPDATE PRODUCT
+        msg = {
+            "name": "Testing product 2",
+            "materials": json.dumps({"testing_material_3": 3, "testing_material_4": 4}),
+            "production_time": 1200,
+            "setup_time": 1200,
+        }
 
-        # # DELETE PRODUCT
-        # response = self.client.delete(
-        #     reverse(viewname="delete_machine", args=[created_machine_info["id"]]),
-        # )
-        # self.assertEqual(response.status_code, status.accepted)
+        response = self.client.post(
+            reverse(
+                viewname="update_product",
+                args=[created_product_info["id"]],
+            ),
+            data=msg,
+        )
+        self.assertEqual(response.status_code, status.accepted)
 
-        # # LIST PRODUCTS
-        # response = self.client.get(reverse(viewname="list_machines"))
-        # self.assertEqual(response.status_code, status.ok)
+        # DELETE PRODUCT
+        response = self.client.delete(
+            reverse(
+                viewname="delete_product",
+                args=[created_product_info["id"]],
+            )
+        )
+        self.assertEqual(response.status_code, status.accepted)
+
+        # LIST PRODUCTS
+        response = self.client.get(reverse(viewname="list_products"))
+        self.assertEqual(response.status_code, status.ok)

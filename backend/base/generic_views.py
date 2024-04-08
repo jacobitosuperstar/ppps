@@ -80,7 +80,7 @@ class BaseDetailView(BaseMixin, View):
             msg = {
                 self.model._meta.verbose_name: self.serialize(db_object),
             }
-            return JsonResponse(msg, status=status.created)
+            return JsonResponse(msg, status=status.accepted)
         except self.model.DoesNotExist as e:
             error_data = e.args[0]
             return JsonResponse(error_data, status=status.not_found)
@@ -95,7 +95,7 @@ class BaseDetailView(BaseMixin, View):
 class BaseUpdateView(BaseMixin, View):
     url_kwarg: str = "id"
 
-    def update(self, request: HttpRequest, *args, **kwargs):
+    def post(self, request: HttpRequest, *args, **kwargs):
         """Base Update View
 
         Updates the db object given the url_kwarg identifier and the form data

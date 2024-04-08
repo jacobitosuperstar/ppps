@@ -64,8 +64,6 @@ class BaseMixin:
             request_values = request.GET
         elif request.method == "POST":
             request_values = request.POST
-        elif request.method == "PUT":
-            request_values = request.POST
 
         form: Union[ModelForm, Form] = self.form(request_values)
 
@@ -99,7 +97,7 @@ class BaseMixin:
         #     data["is_deleted"] = False
 
         for key, value in data.items():
-            query &= Q(f"{key}={value}")
+            query &= Q(**{key:value})
 
         queryset: QuerySet = self.model.objects.filter(query)
         return queryset
@@ -113,7 +111,7 @@ class BaseMixin:
         query = Q()
 
         for key, value in data.items():
-            query &= Q(f"{key}={value}")
+            query &= Q(**{key:value})
 
         try:
             db_object: BaseModel = self.model.objects.get(query)
