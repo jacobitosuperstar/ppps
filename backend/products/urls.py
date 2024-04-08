@@ -5,7 +5,8 @@ from employees.models import RoleChoices
 from .views import (
     ProductListView,
     ProductCreationView,
-    ProductDetailUpdateDeleteView,
+    ProductDetailView,
+    ProductUpdateDeleteView,
 )
 
 
@@ -22,17 +23,17 @@ urlpatterns = [
     ),
     path(
         "<int:id>/",
-        ProductDetailUpdateDeleteView.as_view(),
+        ProductDetailView.as_view(),
         name="detailed_product"
     ),
     path(
         "<int:id>/update_product/",
-        ProductDetailUpdateDeleteView.as_view(),
+        ProductUpdateDeleteView.as_view(),
         name="update_product"
     ),
     path(
         "<int:id>/delete_product/",
-        ProductDetailUpdateDeleteView.as_view(),
+        ProductUpdateDeleteView.as_view(),
         name="delete_product"
     ),
 ]

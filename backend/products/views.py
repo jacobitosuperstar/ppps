@@ -32,6 +32,7 @@ from employees.decorators import role_validation
 
 from employees.models import RoleChoices
 from employees.mixins import (
+    AuthenticatedUserMixin,
     RoleValidatorMixin,
 )
 from .models import (
@@ -44,19 +45,7 @@ from .forms import (
 )
 
 
-# @require_GET
-# @authenticated_user
-# @role_validation(allowed_roles=[
-#     RoleChoices.MANAGEMENT,
-#     RoleChoices.PRODUCTION_MANAGER,
-# ])
-# def get_products_view(request: HttpRequest) -> JsonResponse:
-#
-#     form = ProductForm(request.GET)
-#     ...
-
-
-class ProductListView(BaseListView):
+class ProductListView(AuthenticatedUserMixin, BaseListView):
     """
     Class based view to handle the filtering and listing the objects.
     """
@@ -65,24 +54,36 @@ class ProductListView(BaseListView):
     serializer_depth = 0
 
 
-class ProductCreationView(BaseCreateView):
+class ProductCreationView(RoleValidatorMixin, BaseCreateView):
     """
     Class to chandle the creation of the Product model objects.
     """
+    allowed_roles = [
+        RoleChoices.PRODUCTION_MANAGER,
+        RoleChoices.MANAGEMENT,
+    ]
     model = Product
     form = ProductCreationForm
     serializer_depth = 0
 
+class ProductDetailView(AuthenticatedUserMixin, BaseDetailView):
+    model = Product
+    serializer_depth = 0
+    url_kwarg: str = "id"
 
-class ProductDetailUpdateDeleteView(
-    BaseDetailView,
+class ProductUpdateDeleteView(
+    RoleValidatorMixin,
     BaseUpdateView,
-    BaseDeleteView
+    BaseDeleteView,
 ):
     """
     Class to handle the deatiled view, the update and the delete of the Product
     model object.
     """
+    allowed_roles = [
+        RoleChoices.PRODUCTION_MANAGER,
+        RoleChoices.MANAGEMENT,
+    ]
     model = Product
     form = ProductUpdateForm
     serializer_depth = 0

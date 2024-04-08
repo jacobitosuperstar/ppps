@@ -7,6 +7,7 @@ from jwt.exceptions import (
 )
 
 from django.http import HttpRequest, JsonResponse
+from django.utils.translation import gettext as _
 from jwt_authentication.jwt_authentication import decode_token
 from base.http_status_codes import HTTP_STATUS as http
 
@@ -44,7 +45,7 @@ def role_validation(
             return JsonResponse(message, status=http.forbidden)
         # checking the role
         if token_payload.get("employee_role") not in allowed_roles:
-            msg = {"response": "Role not allowed to do this operation"}
+            msg = {"response": _("Role not allowed to do this operation")}
             response = JsonResponse(msg, status=http.forbidden)
             return response
         return view(request, *args, **kwargs)
