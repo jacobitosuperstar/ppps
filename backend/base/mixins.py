@@ -11,7 +11,11 @@ from django.utils.translation import gettext as _
 from django.http import HttpRequest, JsonResponse
 from django.forms import ModelForm, Form
 from django.db.models import Q
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import (
+    ValidationError,
+    ObjectDoesNotExist,
+    MultipleObjectsReturned,
+)
 
 from .logger import base_logger
 from .models import BaseModel
@@ -120,6 +124,11 @@ class BaseMixin:
         try:
             db_object: BaseModel = self.model.objects.get(query)
             return db_object
+        except self.model.MultipleObjectsReturned as e:
+            msg = {
+                "response": _(f"Multiple entries of type {self.model._meta.verbose_name} found.")
+            }
+            raise MultipleObjectsReturned(msg)
         except self.model.DoesNotExist as e:
             msg = {
                 "response": _(f"{self.model._meta.verbose_name} not found.")

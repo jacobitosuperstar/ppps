@@ -21,6 +21,21 @@ from base.logger import base_logger
 from jwt_authentication.jwt_authentication import create_token
 from jwt_authentication.decorators import authenticated_user
 
+from base.generic_views import (
+    BaseListView,
+    BaseCreateView,
+    BaseDetailView,
+    BaseUpdateView,
+    BaseDeleteView,
+)
+
+from employees.models import RoleChoices
+from employees.mixins import (
+    AuthenticatedUserMixin,
+    RoleValidatorMixin,
+)
+
+
 from .models import (
     Employee,
     RoleChoices,
@@ -93,6 +108,27 @@ def employee_login_view(request: HttpRequest) -> JsonResponse:
         "token": token,
     }
     return JsonResponse(msg)
+
+
+class EmployessListView(RoleValidatorMixin, BaseListView):
+    allowed_roles = [
+        RoleChoices.HR,
+        RoleChoices.MANAGEMENT,
+    ]
+    model = Employee
+    form = EmployeeForm
+    serializer_depth = 0
+
+
+class EmployeeDetailView(RoleValidatorMixin, BaseDetailView):
+    allowed_roles = [
+        RoleChoices.HR,
+        RoleChoices.MANAGEMENT,
+    ]
+    model = Employee
+    form = EmployeeForm
+    serializer_depth = 0
+    ...
 
 
 @require_GET

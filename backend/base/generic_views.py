@@ -13,7 +13,8 @@ from .mixins import BaseMixin
 
 class BaseListView(BaseMixin, View):
     def get(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
-        """Base List Get View
+        """
+        Base List Get View
 
         Returns the list of the objects given the information in the GET
         request.
@@ -41,7 +42,8 @@ class BaseListView(BaseMixin, View):
 
 class BaseCreateView(BaseMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs):
-        """Base Post View
+        """
+        Base Post View
 
         Creates a db object given the form data in the POST request.
         """
@@ -70,7 +72,8 @@ class BaseDetailView(BaseMixin, View):
     url_kwarg: str = "id"
 
     def get(self, request: HttpRequest, *args, **kwargs):
-        """Base Detailed Get View
+        """
+        Base Detailed Get View
 
         Returns the db object given the url_kwarg identifier.
         """
@@ -96,7 +99,8 @@ class BaseUpdateView(BaseMixin, View):
     url_kwarg: str = "id"
 
     def post(self, request: HttpRequest, *args, **kwargs):
-        """Base Update View
+        """
+        Base Update View
 
         Updates the db object given the url_kwarg identifier and the form data
         in the POST request.
@@ -127,7 +131,8 @@ class BaseDeleteView(BaseMixin, View):
     url_kwarg: str = "id"
 
     def delete(self, request: HttpRequest, *args, **kwargs):
-        """Base Delete View
+        """
+        Base Delete View
 
         Deletes the db object given the url_kwarg identifier.
         """
