@@ -100,6 +100,10 @@ class BaseMixin:
             query &= Q(**{key:value})
 
         queryset: QuerySet = self.model.objects.filter(query)
+
+        # TODO: Add prefetch and select related to optimice the database calls
+        # for when the depth of the serializer is greater than 0.
+
         return queryset
 
     def get_query(
