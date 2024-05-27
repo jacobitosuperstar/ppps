@@ -1,6 +1,5 @@
-# Base image with Python and pip preinstalled
-# FROM python:3.11-slim-buster as base
-FROM python:3.11-slim-bookworm as base
+# Stage 1: Build environment with pipenv
+FROM python:3.11-slim-bookworm AS builder
 
 # Set environment variables
 ENV LANG C.UTF-8
@@ -9,16 +8,35 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT=1
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app/
 
-# Install pipenv
+# Install pipenv and dependencies
 RUN python -m pip install --upgrade pip \
     && pip install pipenv
 
-# Copy only the Pipfile and install dependencies
-COPY ./backend/Pipfile* .
-RUN pipenv install --system --deploy
+# Copy Pipfile.lock and install dependencies
+ADD ./backend/Pipfile.lock .
+RUN pipenv sync
+
+# checking that the packages are installed correctly
+RUN /app/.venv/bin/python -c "import django; print(django.VERSION)"
+
+# Stage 2: Final image with application code
+FROM python:3.11-slim-bookworm AS runtime
+
+# Set environment variables
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PIPENV_VENV_IN_PROJECT=1
+
+# Set the working directory
+WORKDIR /app/
+
+# Copy the installed packages from builder stage
+COPY --from=builder /app/.venv/ /app/.venv/
 
 # Copy only necessary files and directories
 COPY ./backend/ .
