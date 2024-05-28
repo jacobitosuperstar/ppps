@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     # MyApps
     "base.apps.BaseConfig",
     "employees.apps.EmployeesConfig",
+    "machines.apps.MachinesConfig",
+    "products.apps.ProductsConfig",
     # Third Party Apps
     "corsheaders",
 ]
@@ -57,6 +59,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
+# if DEBUG:
+#     MIDDLEWARE.append('base.middleware.QueryCounterMiddleware')
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -91,6 +96,14 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -101,7 +114,6 @@ DATABASES = {
         'PORT': '5432',  # Post specified in the docker-compose
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

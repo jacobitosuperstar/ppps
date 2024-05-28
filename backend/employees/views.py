@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Iterable, Optional
 import secrets
 import json
 from django.http import (
@@ -21,11 +21,25 @@ from base.logger import base_logger
 from jwt_authentication.jwt_authentication import create_token
 from jwt_authentication.decorators import authenticated_user
 
+from base.generic_views import (
+    BaseListView,
+    BaseCreateView,
+    BaseDetailView,
+    BaseUpdateView,
+    BaseDeleteView,
+)
+
+from employees.models import RoleChoices
+from employees.mixins import (
+    AuthenticatedUserMixin,
+    RoleValidatorMixin,
+)
+
+
 from .models import (
     Employee,
     RoleChoices,
     OOO,
-    OOOTypes,
     RoleChoices_dict,
     OOOTypes_dict,
 )
@@ -72,7 +86,7 @@ def employee_login_view(request: HttpRequest) -> JsonResponse:
 
     identification = form.cleaned_data.get("identification")
     password = form.cleaned_data.get("password")
-    employee = authenticate(
+    employee: Optional[Employee] = authenticate(
         request,
         identification=identification,
         password=password
@@ -90,9 +104,31 @@ def employee_login_view(request: HttpRequest) -> JsonResponse:
 
     msg = {
         "response": _("Logged in successfully"),
+        "employee": employee.serializer(depth=0),
         "token": token,
     }
     return JsonResponse(msg)
+
+
+class EmployessListView(RoleValidatorMixin, BaseListView):
+    allowed_roles = [
+        RoleChoices.HR,
+        RoleChoices.MANAGEMENT,
+    ]
+    model = Employee
+    form = EmployeeForm
+    serializer_depth = 0
+
+
+class EmployeeDetailView(RoleValidatorMixin, BaseDetailView):
+    allowed_roles = [
+        RoleChoices.HR,
+        RoleChoices.MANAGEMENT,
+    ]
+    model = Employee
+    form = EmployeeForm
+    serializer_depth = 0
+    ...
 
 
 @require_GET
@@ -276,7 +312,7 @@ def create_ooo_view(request: HttpRequest) -> JsonResponse:
             description=form.cleaned_data.get("description"),
         )
         ooo_time.save()
-        msg = {"ooo_time": ooo_time.serializer()}
+        msg = {"ooo_time": ooo_time.serializer(depth=1)}
         return JsonResponse(msg, status=status.created)
     except Exception as e:
         msg = {
@@ -322,7 +358,7 @@ def list_ooo_view(request: HttpRequest) -> JsonResponse:
         query &= Q(end_date__lte=end_date)
 
     ooos = OOO.objects.filter(query).select_related("employee")
-    ooo_list = [ooo.serializer() for ooo in ooos]
+    ooo_list = [ooo.serializer(depth=1) for ooo in ooos]
     return JsonResponse({"ooo_list": ooo_list})
 
 
@@ -330,6 +366,8 @@ def list_ooo_view(request: HttpRequest) -> JsonResponse:
 @authenticated_user
 @role_validation(allowed_roles=[RoleChoices.HR])
 def delete_ooo_view(request: HttpRequest, id: int) -> JsonResponse:
+    """Deletes an OOO given the id.
+    """
     try:
         ooo = OOO.objects.get(id=id)
         ooo.delete()
@@ -341,7 +379,6 @@ def delete_ooo_view(request: HttpRequest, id: int) -> JsonResponse:
         msg = {
             "response": _("OOO entry not found.")
         }
-        base_logger.error(e)
         return JsonResponse(msg, status=status.not_found)
     except Exception as e:
         msg = {
@@ -349,3 +386,37 @@ def delete_ooo_view(request: HttpRequest, id: int) -> JsonResponse:
         }
         base_logger.critical(e)
         return JsonResponse(msg, status=status.internal_server_error)
+
+
+@require_GET
+@authenticated_user
+@role_validation(
+    allowed_roles=[
+        RoleChoices.HR,
+        RoleChoices.MANAGEMENT,
+        RoleChoices.PRODUCTION_MANAGER,
+    ]
+)
+def list_production_employees_view(
+    request: HttpRequest
+) -> JsonResponse:
+    """GETs the list of active production employees."""
+    form = EmployeeForm(request.GET)
+
+    if not form.is_valid():
+        msg = {
+            "response": _("Error in the information given"),
+            "errors": form.errors,
+        }
+        return JsonResponse(msg, status=status.bad_request)
+
+    is_active = form.cleaned_data.get("is_active", True)
+
+    query = Q(role=RoleChoices.PRODUCTION)
+    if is_active:
+        query &= Q(is_active=is_active)
+
+    employees: Iterable[Employee] = Employee.objects.filter(query)
+
+    employees_list = [employee.serializer() for employee in employees]
+    return JsonResponse({"employess": employees_list})
