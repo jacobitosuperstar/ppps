@@ -18,6 +18,18 @@ from products.models import Product
 from production.models import ProductionOrder
 
 
+# TODO: shift type
+# manteinance of the machine
+# repair of the mold
+# repaif of the machine
+# production
+
+
+# OBSERVATION: There is quality control while the machine is being operated
+# there should be something of a note of the time being spended on the
+# production, all the employees should spend time and know how to do it.
+
+
 class ShiftTypes(models.TextChoices):
     """TextChoices class to store the different types of shifts that can occur
     at the factory, where are defined both the value on the database and the

@@ -25,6 +25,8 @@ class Product(BaseModel):
         Time delta needed to prepare the machines to start the creation of the
         product.
     """
+    # TODO: Add mold as a OneToOne relationship
+
     name = models.CharField(
         blank=False,
         null=False,
@@ -48,3 +50,11 @@ class Product(BaseModel):
         db_table = "product"
         verbose_name = "product"
         verbose_name_plural = "products"
+
+# TODO: Add something like the mold, that should be added to the product.
+# What mold should there be in the machinery.
+
+# Parameters
+# cavity number
+# cycle time => ammount of
+# weight
