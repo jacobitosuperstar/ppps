@@ -32,14 +32,17 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT=1
 
-# Set the working directory
-WORKDIR /app/
-
 # Copy the installed packages from builder stage
 COPY --from=builder /app/.venv/ /app/.venv/
 
+# Set the working directory
+WORKDIR /app/
+
 # Copy only necessary files and directories
 COPY ./backend/ .
+
+# checking that the packages are installed correctly
+# RUN /app/.venv/bin/python -c "import django; print(django.VERSION)"
 
 # Exposing the port
 EXPOSE 8000
