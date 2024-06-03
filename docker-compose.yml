@@ -51,7 +51,7 @@ services:
     networks:
       - server_network
   # Frontend App
-  app:
+  frontend:
     build:
       context: .
       dockerfile: ./frontend/Dockerfile
